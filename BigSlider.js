@@ -36,6 +36,16 @@ export default class BigSlider extends Component {
 
 
     this.range = props.maximumValue - props.minimumValue
+
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        this.props.onSlidingStart()
+        this.setState({ anchorValue: this.state.value })
+      },
+      onPanResponderMove: Animated.event([null, {}], { listener: this.handleSlide, useNativeDriver: false }),
+      onPanResponderRelease: () => { this.props.onSlidingComplete() },
+    })
   }
 
   state: {
@@ -43,18 +53,6 @@ export default class BigSlider extends Component {
     value: number,
     width: number,
     height: number,
-  }
-
-  componentWillMount () {
-    this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        this.props.onSlidingStart()
-        this.setState({ anchorValue: this.state.value })
-      },
-      onPanResponderMove: Animated.event([null, {}], { listener: this.handleSlide }),
-      onPanResponderRelease: () => { this.props.onSlidingComplete() },
-    })
   }
 
   onLayout = ({ nativeEvent }: Object) => {
